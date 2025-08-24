@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MoneyTrust</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="container">
+
+    <!-- AUTH -->
+    <div class="card" id="authCard">
+      <h2 id="authTitle">Daftar</h2>
+      <input id="inputIdentifier" placeholder="No HP / Email" />
+      <input id="inputPassword" type="password" placeholder="Sandi" />
+      <input id="inputInvite" placeholder="Kode Undangan (Opsional)" />
+      <button id="authBtn">Daftar</button>
+      <p class="small">
+        <span>Sudah punya akun?</span>
+        <a href="#" id="authSwitch">Login</a>
+      </p>
+      <p id="authMsg" class="msg"></p>
+    </div>
+
+    <!-- HOME -->
+    <div class="card hide" id="homeCard">
+      <div class="row space-between">
+        <h3>Beranda</h3>
+        <button class="small ghost" id="btnLogout">Logout</button>
+      </div>
+
+      <div class="card inner-card">
+        <p>Saldo (otomatis klaim pendapatan harian saat masuk):</p>
+        <h2 id="saldoAmount">Rp 0</h2>
+        <div class="row">
+          <button id="btnTopup">Isi Ulang Saldo</button>
+          <button class="ghost" id="btnWithdraw">Tarik Saldo</button>
+        </div>
+      </div>
+
+      <div class="card inner-card">
+        <div class="row space-between">
+          <h4>Produk</h4>
+          <button class="small ghost" id="btnRefreshProducts">Refresh</button>
+        </div>
+        <div id="productList" class="product-list"></div>
+      </div>
+
+      <div class="card inner-card">
+        <h4>Menu</h4>
+        <div class="menu-grid">
+          <button id="btnRiwayat">Riwayat Transaksi</button>
+          <button id="btnSaya">Saya</button>
+          <button id="btnLayanan">Layanan Pelanggan</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOPUP -->
+    <div class="card hide" id="topupCard">
+      <h3>Pilih Jumlah Top-up</h3>
+      <div id="topupOptions" class="grid"></div>
+      <p class="small">Metode pembayaran: SeaBank</p>
+      <div class="card inner-card">
+        <p>Virtual Account:</p>
+        <p><strong>Seabank = 9015 0033 5473</strong></p>
+        <button id="btnPaid">Sudah dibayar</button>
+      </div>
+      <button class="ghost" id="btnTopupBack">Kembali</button>
+      <p id="topupMsg" class="msg"></p>
+    </div>
+
+    <!-- WITHDRAW -->
+    <div class="card hide" id="wdCard">
+      <h3>Tarik Saldo</h3>
+      <p class="small">Minimal Rp 100.000</p>
+      <input id="wdAmount" type="number" placeholder="Nominal penarikan" />
+      <button id="btnWdSubmit">Tarik</button>
+      <button class="ghost" id="btnWdBack">Kembali</button>
+      <p id="wdMsg" class="msg"></p>
+    </div>
+
+    <!-- RIWAYAT -->
+    <div class="card hide" id="riwayatCard">
+      <h3>Riwayat Transaksi</h3>
+      <div id="riwayatList"></div>
+      <button class="ghost" id="btnRiwayatBack">Kembali</button>
+    </div>
+
+    <!-- SAYA -->
+    <div class="card hide" id="sayaCard">
+      <h3>Akun Saya</h3>
+      <p><strong id="userIdentifier"></strong></p>
+      <p>Kode Undangan: <span id="userInvite">-</span></p>
+      <p>Detail Rekening: <span id="userBank">-</span></p>
+
+      <button id="btnTambahRek">Tambah/Ubah Rekening</button>
+      <button id="btnUbahPass">Ganti Sandi</button>
+      <button class="ghost" id="btnSayaBack">Kembali</button>
+
+      <div id="rekForm" class="hide inner-card">
+        <h4>Rekening / E-Wallet</h4>
+        <select id="rekType">
+          <option value="bank">Bank</option>
+          <option value="ewallet">E-Wallet</option>
+        </select>
+        <input id="rekNumber" placeholder="Nomor Rekening / No HP" />
+        <input id="rekName" placeholder="Nama Pemilik" />
+        <button id="saveRek">Simpan</button>
+      </div>
+
+      <div id="passForm" class="hide inner-card">
+        <h4>Ganti Sandi</h4>
+        <input id="oldPass" type="password" placeholder="Sandi Lama" />
+        <input id="newPass" type="password" placeholder="Sandi Baru" />
+        <button id="savePass">Simpan</button>
+        <p><a href="#" id="forgotPass">Lupa sandi?</a></p>
+      </div>
+    </div>
+
+    <!-- LAYANAN -->
+    <div class="card hide" id="layananCard">
+      <h3>Layanan Pelanggan</h3>
+      <p>Email: support@moneytrust.example (simulasi)</p>
+      <button class="ghost" id="btnLayananBack">Kembali</button>
+    </div>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
