@@ -1,5 +1,5 @@
 // ======== KONFIG ========
-const API_BASE = "http://moneytrusted-production.up.railway.app"; // GANTI saat deploy: https://<app>.up.railway.app/api
+const API_BASE = "https://moneytrusted-production.up.railway.app/api/register"; // GANTI saat deploy: https://<app>.up.railway.app/api
 
 // ======== ELEMEN ========
 const authCard = document.getElementById('authCard');
@@ -115,7 +115,7 @@ authBtn.addEventListener('click', async ()=>{
   try{
     if (authMode === 'register'){
       const j = await apiPost('/register', { identifier:id, password:pwd, invite });
-      if (j.error || j.message?.toLowerCase().includes('gagal')) { authMsg.innerText = j.message || 'Gagal daftar'; return; }
+      if (j.error || !j.token) { authMsg.innerText = j.message || 'Gagal daftar'; return; }
       localStorage.setItem('token', j.token);
       await afterLogin();
     } else {
