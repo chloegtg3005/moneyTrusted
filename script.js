@@ -156,7 +156,7 @@ async function loadProducts(){
     const el = document.createElement('div');
     el.className = 'product';
    el.innerHTML = `
-  <img src="images/produk.jpg" alt="${prod.name}">
+  <img src="images/produk.png" alt="${prod.name}">
   <h5>${prod.name}</h5>
   <p>Harga: <strong>${rp(prod.price)}</strong></p>
   <p>Pendapatan Harian: <strong>${rp(prod.dailyIncome)}</strong></p>
