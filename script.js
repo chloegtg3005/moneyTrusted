@@ -1,5 +1,5 @@
 // ======== KONFIG ========
-const API_BASE = "https://moneytrusted-production.up.railway.app"; // GANTI saat deploy: https://<app>.up.railway.app/api
+const API_BASE = "https://moneytrusted-production.up.railway.app"; 
 
 // ======== ELEMEN ========
 const authCard = document.getElementById('authCard');
@@ -114,12 +114,12 @@ authBtn.addEventListener('click', async ()=>{
 
   try{
     if (authMode === 'register'){
-      const j = await apiPost('/api/register', { identifier:id, password:pwd, invite });
+      const j = await apiPost('/auth/register', { identifier:id, password:pwd, invite });
       if (j.error || !j.token) { authMsg.innerText = j.message || 'Gagal daftar'; return; }
       localStorage.setItem('token', j.token);
       await afterLogin();
     } else {
-      const j = await apiPost('/api/login', { identifier:id, password:pwd });
+      const j = await apiPost('/auth/login', { identifier:id, password:pwd });
       if (!j.token) { authMsg.innerText = j.message || 'Gagal login'; return; }
       localStorage.setItem('token', j.token);
       await afterLogin();
@@ -130,14 +130,13 @@ authBtn.addEventListener('click', async ()=>{
 btnLogout.addEventListener('click', ()=>{ localStorage.removeItem('token'); location.reload(); });
 
 async function afterLogin(){
-  // klaim payout harian
-  await apiPost('/api/wallet/claim');
+  await apiPost('/wallet/claim');
   await loadHome();
 }
 
 // ======== HOME ========
 async function loadHome(){
-  const u = await apiGet('/api/auth/me');
+  const u = await apiGet('/auth/me');
   if (!u) return;
   hide(authCard); hide(topupCard); hide(riwayatCard); hide(sayaCard); hide(layananCard); hide(wdCard);
   show(homeCard);
@@ -149,27 +148,26 @@ async function loadHome(){
 }
 
 async function loadProducts(){
-  const p = await apiGet('/api/products');
+  const p = await apiGet('/products');
   productsCache = Array.isArray(p) ? p : [];
   productList.innerHTML = '';
   productsCache.forEach(prod=>{
     const el = document.createElement('div');
     el.className = 'product';
-   el.innerHTML = `
-  <img src="images/produk.png" alt="${prod.name}">
-  <h5>${prod.name}</h5>
-  <p>Harga: <strong>${rp(prod.price)}</strong></p>
-  <p>Pendapatan Harian: <strong>${rp(prod.dailyIncome)}</strong></p>
-  <p>Siklus: ${prod.cycleDays} hari • Total: <strong>${rp(prod.totalIncome)}</strong></p>
-  <button data-id="${prod._id}" class="buyBtn">Beli</button>
-`;
-
+    el.innerHTML = `
+      <img src="images/produk.png" alt="${prod.name}">
+      <h5>${prod.name}</h5>
+      <p>Harga: <strong>${rp(prod.price)}</strong></p>
+      <p>Pendapatan Harian: <strong>${rp(prod.dailyIncome)}</strong></p>
+      <p>Siklus: ${prod.cycleDays} hari • Total: <strong>${rp(prod.totalIncome)}</strong></p>
+      <button data-id="${prod._id}" class="buyBtn">Beli</button>
+    `;
     productList.appendChild(el);
   });
   document.querySelectorAll('.buyBtn').forEach(b=>{
     b.addEventListener('click', async (e)=>{
       const id = e.currentTarget.dataset.id;
-      const res = await apiPost('/api/products/buy', { productId:id });
+      const res = await apiPost('/products/buy', { productId:id });
       alert(res.message || 'Done');
       await loadHome();
     });
@@ -198,7 +196,7 @@ function renderTopupOptions(){
 btnPaid.addEventListener('click', async ()=>{
   if(!selectedTopup){ topupMsg.innerText='Pilih jumlah topup dahulu'; return; }
   topupMsg.innerText='';
-  const j = await apiPost('/api/wallet/topup', { amount:selectedTopup, method:'seabank' });
+  const j = await apiPost('/wallet/topup', { amount:selectedTopup, method:'seabank' });
   alert((j && j.message) || 'Topup dibuat');
 });
 
@@ -208,7 +206,7 @@ btnWdBack.addEventListener('click', ()=>{ hide(wdCard); show(homeCard); });
 btnWdSubmit.addEventListener('click', async ()=>{
   const amt = parseInt(wdAmount.value,10);
   if(!amt){ wdMsg.innerText='Masukkan nominal'; return; }
-  const j = await apiPost('/api/wallet/withdraw', { amount: amt });
+  const j = await apiPost('/wallet/withdraw', { amount: amt });
   if(j && j.message) alert(j.message);
   await loadHome();
 });
@@ -216,7 +214,7 @@ btnWdSubmit.addEventListener('click', async ()=>{
 // ======== RIWAYAT ========
 btnRiwayat.addEventListener('click', async ()=>{
   hide(homeCard); show(riwayatCard);
-  const list = await apiGet('/api/wallet/history');
+  const list = await apiGet('/wallet/history');
   riwayatList.innerHTML='';
   if(!list || list.length===0){ riwayatList.innerHTML='<p class="small">Belum ada riwayat</p>'; return; }
   list.forEach(tx=>{
@@ -240,7 +238,7 @@ btnTambahRek.addEventListener('click', ()=>{ rekForm.classList.toggle('hide'); }
 saveRek.addEventListener('click', async ()=>{
   const body = { type:rekType.value, number:rekNumber.value.trim(), name:rekName.value.trim() };
   if(!body.number || !body.name) return alert('Lengkapi data rekening');
-  const r = await apiPost('/api/auth/rekening', body);
+  const r = await apiPost('/auth/rekening', body);
   alert(r.message || 'Tersimpan');
   rekForm.classList.add('hide');
   await loadHome();
@@ -258,7 +256,7 @@ forgotPass.addEventListener('click', async (e)=>{
   e.preventDefault();
   const id = prompt('Masukkan No HP/Email terdaftar:');
   if(!id) return;
-  const r = await apiPost('/api/auth/forgot', { identifier:id });
+  const r = await apiPost('/auth/forgot', { identifier:id });
   alert(r.message || 'OK');
 });
 
