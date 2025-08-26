@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 // 🔗 ganti dengan connection string MongoDB Atlas kamu
-mongoose.connect("mongodb+srv://<USER>:<PASSWORD>@cluster0.mongodb.net/moneytrusted", {
+mongoose.connect("mongodb+srv://chloe300524:<claudiaginting300524@cluster1.djgh6q0.mongodb.net/?retryWrites=true&w=majority&appName=Cluster1", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
