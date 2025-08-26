@@ -114,12 +114,12 @@ authBtn.addEventListener('click', async ()=>{
 
   try{
     if (authMode === 'register'){
-      const j = await apiPost('/auth/register', { identifier:id, password:pwd, invite });
+      const j = await apiPost('/api/auth/register', { identifier:id, password:pwd, invite });
       if (j.error || !j.token) { authMsg.innerText = j.message || 'Gagal daftar'; return; }
       localStorage.setItem('token', j.token);
       await afterLogin();
     } else {
-      const j = await apiPost('/auth/login', { identifier:id, password:pwd });
+      const j = await apiPost('/api/auth/login', { identifier:id, password:pwd });
       if (!j.token) { authMsg.innerText = j.message || 'Gagal login'; return; }
       localStorage.setItem('token', j.token);
       await afterLogin();
@@ -130,13 +130,13 @@ authBtn.addEventListener('click', async ()=>{
 btnLogout.addEventListener('click', ()=>{ localStorage.removeItem('token'); location.reload(); });
 
 async function afterLogin(){
-  await apiPost('/wallet/claim');
+  await apiPost('/api/wallet/claim');
   await loadHome();
 }
 
 // ======== HOME ========
 async function loadHome(){
-  const u = await apiGet('/auth/me');
+  const u = await apiGet('/api/auth/me');
   if (!u) return;
   hide(authCard); hide(topupCard); hide(riwayatCard); hide(sayaCard); hide(layananCard); hide(wdCard);
   show(homeCard);
@@ -148,7 +148,7 @@ async function loadHome(){
 }
 
 async function loadProducts(){
-  const p = await apiGet('/products');
+  const p = await apiGet('/api/products');
   productsCache = Array.isArray(p) ? p : [];
   productList.innerHTML = '';
   productsCache.forEach(prod=>{
@@ -167,7 +167,7 @@ async function loadProducts(){
   document.querySelectorAll('.buyBtn').forEach(b=>{
     b.addEventListener('click', async (e)=>{
       const id = e.currentTarget.dataset.id;
-      const res = await apiPost('/products/buy', { productId:id });
+      const res = await apiPost('/api/products/buy', { productId:id });
       alert(res.message || 'Done');
       await loadHome();
     });
@@ -196,7 +196,7 @@ function renderTopupOptions(){
 btnPaid.addEventListener('click', async ()=>{
   if(!selectedTopup){ topupMsg.innerText='Pilih jumlah topup dahulu'; return; }
   topupMsg.innerText='';
-  const j = await apiPost('/wallet/topup', { amount:selectedTopup, method:'seabank' });
+  const j = await apiPost('/api/wallet/topup', { amount:selectedTopup, method:'seabank' });
   alert((j && j.message) || 'Topup dibuat');
 });
 
@@ -206,7 +206,7 @@ btnWdBack.addEventListener('click', ()=>{ hide(wdCard); show(homeCard); });
 btnWdSubmit.addEventListener('click', async ()=>{
   const amt = parseInt(wdAmount.value,10);
   if(!amt){ wdMsg.innerText='Masukkan nominal'; return; }
-  const j = await apiPost('/wallet/withdraw', { amount: amt });
+  const j = await apiPost('/api/wallet/withdraw', { amount: amt });
   if(j && j.message) alert(j.message);
   await loadHome();
 });
@@ -214,7 +214,7 @@ btnWdSubmit.addEventListener('click', async ()=>{
 // ======== RIWAYAT ========
 btnRiwayat.addEventListener('click', async ()=>{
   hide(homeCard); show(riwayatCard);
-  const list = await apiGet('/wallet/history');
+  const list = await apiGet('/api/wallet/history');
   riwayatList.innerHTML='';
   if(!list || list.length===0){ riwayatList.innerHTML='<p class="small">Belum ada riwayat</p>'; return; }
   list.forEach(tx=>{
@@ -238,7 +238,7 @@ btnTambahRek.addEventListener('click', ()=>{ rekForm.classList.toggle('hide'); }
 saveRek.addEventListener('click', async ()=>{
   const body = { type:rekType.value, number:rekNumber.value.trim(), name:rekName.value.trim() };
   if(!body.number || !body.name) return alert('Lengkapi data rekening');
-  const r = await apiPost('/auth/rekening', body);
+  const r = await apiPost('/api/auth/rekening', body);
   alert(r.message || 'Tersimpan');
   rekForm.classList.add('hide');
   await loadHome();
@@ -248,7 +248,7 @@ btnUbahPass.addEventListener('click', ()=>{ passForm.classList.toggle('hide'); }
 savePass.addEventListener('click', async ()=>{
   const oldp = oldPass.value.trim(), newp = newPass.value.trim();
   if(!oldp || !newp) return alert('Isi sandi lama & baru');
-  const r = await apiPost('/auth/change-password', { oldPassword:oldp, newPassword:newp });
+  const r = await apiPost('/api/auth/change-password', { oldPassword:oldp, newPassword:newp });
   alert(r.message || 'OK');
   passForm.classList.add('hide');
 });
@@ -256,7 +256,7 @@ forgotPass.addEventListener('click', async (e)=>{
   e.preventDefault();
   const id = prompt('Masukkan No HP/Email terdaftar:');
   if(!id) return;
-  const r = await apiPost('/auth/forgot', { identifier:id });
+  const r = await apiPost('/api/auth/forgot', { identifier:id });
   alert(r.message || 'OK');
 });
 
