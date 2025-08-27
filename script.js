@@ -24,18 +24,80 @@ async function apiPost(path, body){
   return res.json();
 }
 
+// ======== VARIABEL DOM ========
+let authMode = "login"; // default
+
+const authTitle = document.getElementById("authTitle");
+const authBtn = document.getElementById("authBtn");
+const authSwitch = document.getElementById("authSwitch");
+const authMsg = document.getElementById("authMsg");
+const inputIdentifier = document.getElementById("inputIdentifier");
+const inputPassword = document.getElementById("inputPassword");
+const inputInvite = document.getElementById("inputInvite");
+const btnLogout = document.getElementById("btnLogout");
+
+const authCard = document.getElementById("authCard");
+const homeCard = document.getElementById("homeCard");
+const topupCard = document.getElementById("topupCard");
+const riwayatCard = document.getElementById("riwayatCard");
+const sayaCard = document.getElementById("sayaCard");
+const layananCard = document.getElementById("layananCard");
+const wdCard = document.getElementById("wdCard");
+
+const saldoAmount = document.getElementById("saldoAmount");
+const userIdentifier = document.getElementById("userIdentifier");
+const userInvite = document.getElementById("userInvite");
+const userBank = document.getElementById("userBank");
+
+const productList = document.getElementById("productList");
+const btnRefreshProducts = document.getElementById("btnRefreshProducts");
+
+const btnTopup = document.getElementById("btnTopup");
+const btnTopupBack = document.getElementById("btnTopupBack");
+const topupOptions = document.getElementById("topupOptions");
+const btnPaid = document.getElementById("btnPaid");
+const topupMsg = document.getElementById("topupMsg");
+
+const btnWithdraw = document.getElementById("btnWithdraw");
+const btnWdBack = document.getElementById("btnWdBack");
+const btnWdSubmit = document.getElementById("btnWdSubmit");
+const wdMsg = document.getElementById("wdMsg");
+const wdAmount = document.getElementById("wdAmount");
+
+const btnRiwayat = document.getElementById("btnRiwayat");
+const btnRiwayatBack = document.getElementById("btnRiwayatBack");
+const riwayatList = document.getElementById("riwayatList");
+
+const btnSaya = document.getElementById("btnSaya");
+const btnSayaBack = document.getElementById("btnSayaBack");
+const btnTambahRek = document.getElementById("btnTambahRek");
+const saveRek = document.getElementById("saveRek");
+const rekForm = document.getElementById("rekForm");
+const rekType = document.getElementById("rekType");
+const rekNumber = document.getElementById("rekNumber");
+const rekName = document.getElementById("rekName");
+
+const btnUbahPass = document.getElementById("btnUbahPass");
+const savePass = document.getElementById("savePass");
+const passForm = document.getElementById("passForm");
+const oldPass = document.getElementById("oldPass");
+const newPass = document.getElementById("newPass");
+const forgotPass = document.getElementById("forgotPass");
+
+const btnLayanan = document.getElementById("btnLayanan");
+const btnLayananBack = document.getElementById("btnLayananBack");
+
 // ======== AUTH ========
 function setAuthMode(mode){
   authMode = mode;
   if (mode === 'register') {
     authTitle.innerText = 'Daftar';
     authBtn.innerText = 'Daftar';
-    inputInvite.parentElement?.classList?.remove('hide');
-    document.getElementById('inputInvite').style.display = 'block';
+    inputInvite.style.display = 'block';
   } else {
     authTitle.innerText = 'Login';
     authBtn.innerText = 'Login';
-    document.getElementById('inputInvite').style.display = 'none';
+    inputInvite.style.display = 'none';
   }
   authMsg.innerText = '';
 }
@@ -119,6 +181,7 @@ btnTopup.addEventListener('click', ()=>{ hide(homeCard); show(topupCard); render
 btnTopupBack.addEventListener('click', ()=>{ hide(topupCard); show(homeCard); });
 
 const topupValues=[100000,150000,200000,250000,300000,350000,500000,1000000,2000000,3000000];
+let selectedTopup = null;
 function renderTopupOptions(){
   topupOptions.innerHTML='';
   topupValues.forEach(v=>{
