@@ -1,0 +1,25 @@
+@base = https://moneytrusted-production.up.railway.app
+### Register
+POST https://moneytrusted-production.up.railway.app/api/register
+Content-Type: application/json
+
+{
+  "identifier": "tes@example.com",
+  "password": "123456"
+}
+
+### Login
+POST https://moneytrusted-production.up.railway.app/api/login
+Content-Type: application/json
+
+{
+  "identifier": "tes@example.com",
+  "password": "123456"
+}
+
+### Get Current User (me)
+GET https://moneytrusted-production.up.railway.app/api/auth/me
+Authorization: Bearer <token_dari_login>
+
+### Get Products
+GET https://moneytrusted-production.up.railway.app/api/products
