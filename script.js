@@ -1,70 +1,6 @@
 // ======== KONFIG ========
 const API_BASE = "https://moneytrusted-production.up.railway.app"; 
 
-// ======== ELEMEN ========
-const authCard = document.getElementById('authCard');
-const authTitle = document.getElementById('authTitle');
-const inputIdentifier = document.getElementById('inputIdentifier');
-const inputPassword = document.getElementById('inputPassword');
-const inputInvite = document.getElementById('inputInvite');
-const authBtn = document.getElementById('authBtn');
-const authSwitch = document.getElementById('authSwitch');
-const authMsg = document.getElementById('authMsg');
-
-const homeCard = document.getElementById('homeCard');
-const saldoAmount = document.getElementById('saldoAmount');
-const btnTopup = document.getElementById('btnTopup');
-const btnWithdraw = document.getElementById('btnWithdraw');
-const productList = document.getElementById('productList');
-const btnLogout = document.getElementById('btnLogout');
-const btnRefreshProducts = document.getElementById('btnRefreshProducts');
-
-const topupCard = document.getElementById('topupCard');
-const topupOptions = document.getElementById('topupOptions');
-const btnPaid = document.getElementById('btnPaid');
-const topupMsg = document.getElementById('topupMsg');
-const btnTopupBack = document.getElementById('btnTopupBack');
-
-const wdCard = document.getElementById('wdCard');
-const wdAmount = document.getElementById('wdAmount');
-const btnWdSubmit = document.getElementById('btnWdSubmit');
-const btnWdBack = document.getElementById('btnWdBack');
-const wdMsg = document.getElementById('wdMsg');
-
-const riwayatCard = document.getElementById('riwayatCard');
-const riwayatList = document.getElementById('riwayatList');
-const btnRiwayat = document.getElementById('btnRiwayat');
-const btnRiwayatBack = document.getElementById('btnRiwayatBack');
-
-const sayaCard = document.getElementById('sayaCard');
-const btnSaya = document.getElementById('btnSaya');
-const btnSayaBack = document.getElementById('btnSayaBack');
-const userIdentifier = document.getElementById('userIdentifier');
-const userInvite = document.getElementById('userInvite');
-const userBank = document.getElementById('userBank');
-const btnTambahRek = document.getElementById('btnTambahRek');
-const rekForm = document.getElementById('rekForm');
-const saveRek = document.getElementById('saveRek');
-const rekType = document.getElementById('rekType');
-const rekNumber = document.getElementById('rekNumber');
-const rekName = document.getElementById('rekName');
-
-const passForm = document.getElementById('passForm');
-const btnUbahPass = document.getElementById('btnUbahPass');
-const savePass = document.getElementById('savePass');
-const oldPass = document.getElementById('oldPass');
-const newPass = document.getElementById('newPass');
-const forgotPass = document.getElementById('forgotPass');
-
-const layananCard = document.getElementById('layananCard');
-const btnLayanan = document.getElementById('btnLayanan');
-const btnLayananBack = document.getElementById('btnLayananBack');
-
-// ======== STATE ========
-let authMode = "register";
-let selectedTopup = null;
-let productsCache = [];
-
 // ======== UTIL ========
 function show(el){ el.classList.remove('hide') }
 function hide(el){ el.classList.add('hide') }
@@ -104,7 +40,10 @@ function setAuthMode(mode){
   authMsg.innerText = '';
 }
 
-authSwitch.addEventListener('click', (e)=>{ e.preventDefault(); setAuthMode(authMode==='register'?'login':'register'); });
+authSwitch.addEventListener('click', (e)=>{ 
+  e.preventDefault(); 
+  setAuthMode(authMode==='register'?'login':'register'); 
+});
 
 authBtn.addEventListener('click', async ()=>{
   const id = inputIdentifier.value.trim();
@@ -114,12 +53,12 @@ authBtn.addEventListener('click', async ()=>{
 
   try{
     if (authMode === 'register'){
-      const j = await apiPost('/api/auth/register', { identifier:id, password:pwd, invite });
+      const j = await apiPost('/auth/register', { identifier:id, password:pwd, invite });
       if (j.error || !j.token) { authMsg.innerText = j.message || 'Gagal daftar'; return; }
       localStorage.setItem('token', j.token);
       await afterLogin();
     } else {
-      const j = await apiPost('/api/auth/login', { identifier:id, password:pwd });
+      const j = await apiPost('/auth/login', { identifier:id, password:pwd });
       if (!j.token) { authMsg.innerText = j.message || 'Gagal login'; return; }
       localStorage.setItem('token', j.token);
       await afterLogin();
@@ -130,13 +69,13 @@ authBtn.addEventListener('click', async ()=>{
 btnLogout.addEventListener('click', ()=>{ localStorage.removeItem('token'); location.reload(); });
 
 async function afterLogin(){
-  await apiPost('/api/wallet/claim');
+  await apiPost('/wallet/claim');
   await loadHome();
 }
 
 // ======== HOME ========
 async function loadHome(){
-  const u = await apiGet('/api/auth/me');
+  const u = await apiGet('/auth/me');
   if (!u) return;
   hide(authCard); hide(topupCard); hide(riwayatCard); hide(sayaCard); hide(layananCard); hide(wdCard);
   show(homeCard);
@@ -148,7 +87,7 @@ async function loadHome(){
 }
 
 async function loadProducts(){
-  const p = await apiGet('/api/products');
+  const p = await apiGet('/products');
   productsCache = Array.isArray(p) ? p : [];
   productList.innerHTML = '';
   productsCache.forEach(prod=>{
@@ -167,7 +106,7 @@ async function loadProducts(){
   document.querySelectorAll('.buyBtn').forEach(b=>{
     b.addEventListener('click', async (e)=>{
       const id = e.currentTarget.dataset.id;
-      const res = await apiPost('/api/products/buy', { productId:id });
+      const res = await apiPost('/products/buy', { productId:id });
       alert(res.message || 'Done');
       await loadHome();
     });
@@ -196,7 +135,7 @@ function renderTopupOptions(){
 btnPaid.addEventListener('click', async ()=>{
   if(!selectedTopup){ topupMsg.innerText='Pilih jumlah topup dahulu'; return; }
   topupMsg.innerText='';
-  const j = await apiPost('/api/wallet/topup', { amount:selectedTopup, method:'seabank' });
+  const j = await apiPost('/wallet/topup', { amount:selectedTopup, method:'seabank' });
   alert((j && j.message) || 'Topup dibuat');
 });
 
@@ -206,7 +145,7 @@ btnWdBack.addEventListener('click', ()=>{ hide(wdCard); show(homeCard); });
 btnWdSubmit.addEventListener('click', async ()=>{
   const amt = parseInt(wdAmount.value,10);
   if(!amt){ wdMsg.innerText='Masukkan nominal'; return; }
-  const j = await apiPost('/api/wallet/withdraw', { amount: amt });
+  const j = await apiPost('/wallet/withdraw', { amount: amt });
   if(j && j.message) alert(j.message);
   await loadHome();
 });
@@ -214,7 +153,7 @@ btnWdSubmit.addEventListener('click', async ()=>{
 // ======== RIWAYAT ========
 btnRiwayat.addEventListener('click', async ()=>{
   hide(homeCard); show(riwayatCard);
-  const list = await apiGet('/api/wallet/history');
+  const list = await apiGet('/wallet/history');
   riwayatList.innerHTML='';
   if(!list || list.length===0){ riwayatList.innerHTML='<p class="small">Belum ada riwayat</p>'; return; }
   list.forEach(tx=>{
@@ -238,7 +177,7 @@ btnTambahRek.addEventListener('click', ()=>{ rekForm.classList.toggle('hide'); }
 saveRek.addEventListener('click', async ()=>{
   const body = { type:rekType.value, number:rekNumber.value.trim(), name:rekName.value.trim() };
   if(!body.number || !body.name) return alert('Lengkapi data rekening');
-  const r = await apiPost('/api/auth/rekening', body);
+  const r = await apiPost('/auth/rekening', body);
   alert(r.message || 'Tersimpan');
   rekForm.classList.add('hide');
   await loadHome();
@@ -248,7 +187,7 @@ btnUbahPass.addEventListener('click', ()=>{ passForm.classList.toggle('hide'); }
 savePass.addEventListener('click', async ()=>{
   const oldp = oldPass.value.trim(), newp = newPass.value.trim();
   if(!oldp || !newp) return alert('Isi sandi lama & baru');
-  const r = await apiPost('/api/auth/change-password', { oldPassword:oldp, newPassword:newp });
+  const r = await apiPost('/auth/change-password', { oldPassword:oldp, newPassword:newp });
   alert(r.message || 'OK');
   passForm.classList.add('hide');
 });
@@ -256,7 +195,7 @@ forgotPass.addEventListener('click', async (e)=>{
   e.preventDefault();
   const id = prompt('Masukkan No HP/Email terdaftar:');
   if(!id) return;
-  const r = await apiPost('/api/auth/forgot', { identifier:id });
+  const r = await apiPost('/auth/forgot', { identifier:id });
   alert(r.message || 'OK');
 });
 
